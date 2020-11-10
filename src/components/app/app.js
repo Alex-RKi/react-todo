@@ -9,9 +9,10 @@ export default class App extends Component {
 		todoData: [
 			this.createTask('Task'),
 			this.createTask('Important task'),
-			this.createTask('Done task')
+			this.createTask('Done task'),
 		],
-		frag: 'Task'
+		frag: '',
+		filter: 'all'
 	}
 
 	findIndex = (id) => {
@@ -36,7 +37,24 @@ export default class App extends Component {
 			...list.slice(index + 1)
 		]
 	}
-
+	filterContent(list, frag) {
+		if (frag.length === 0) return list;
+		return list.filter((item) => {
+			return item.content.toLowerCase().indexOf(frag.toLowerCase()) > -1;
+		})
+	};
+	filterStatus(list, status) {
+		switch (status) {
+			case 'all':
+				return list;
+			case 'active':
+				return list.filter((task) => !task.done);
+			case 'done':
+				return list.filter((task) => task.done);
+			default:
+				return list;
+		}
+	}
 	onDelete = (id) => {
 		this.setState(({ todoData }) => {
 			const index = this.findIndex(id);
@@ -73,21 +91,29 @@ export default class App extends Component {
 		})
 
 	};
-	search(list, frag) {
-		if(frag.length === 0) return list;
-		return list.filter((item) => {
-			return item.content.indexOf(frag) > -1;
-		})
+	onSearch = (frag) => {
+		this.setState({ frag })
+	};
+	onFilter = (filter) => {
+		this.setState({ filter })
 	}
-
 	render() {
-		const { todoData, frag } = this.state;
-		const filteredList = this.search(todoData, frag);
+		const { todoData, frag, filter } = this.state;
+		const filteredList = this.filterStatus(
+			this.filterContent(todoData, frag), filter
+		);
+
 		const complete = todoData.filter((task) => task.done).length;
 		const uncomplete = todoData.length - complete;
 		return (
 			<div className='jumbotron'>
-				<Header complete={complete} uncomplete={uncomplete}/>
+				<Header
+					complete={complete}
+					uncomplete={uncomplete}
+					onSearch={this.onSearch}
+					filter={filter}
+					onFilter={this.onFilter}
+				/>
 				<TodoList
 					onDelete={this.onDelete}
 					onDone={this.onDone}
