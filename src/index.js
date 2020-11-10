@@ -4,7 +4,7 @@ import App from './components/app'
 
 ReactDOM.render(
 	<React.StrictMode>
-		<App />
+		<App className='jumbotron rounded'/>
 	</React.StrictMode>,
 	document.getElementById('root')
 );

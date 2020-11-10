@@ -1,0 +1,10 @@
+.done {
+	text-decoration: line-through;
+}
+.task{
+	cursor: pointer;
+}
+.task:hover {
+	font-size: 1.1rem;
+	
+}
